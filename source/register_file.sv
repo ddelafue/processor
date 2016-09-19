@@ -12,7 +12,7 @@ word_t [31:0] register;
 assign rfif.returner = register[31];
 
 
-always_ff @(posedge CLK, negedge nRST)
+always_ff @(negedge CLK, negedge nRST)
 begin
  if(!nRST)
  begin
