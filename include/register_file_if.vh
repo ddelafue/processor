@@ -17,15 +17,15 @@ interface register_file_if;
   logic     WEN;
   regbits_t wsel, rsel1, rsel2;
   word_t    wdat, rdat1, rdat2;
-
+  logic returner;
   // register file ports
   modport rf (
     input   WEN, wsel, rsel1, rsel2, wdat,
-    output  rdat1, rdat2
+    output  rdat1, rdat2, returner
   );
   // register file tb
   modport tb (
-    input   rdat1, rdat2,
+    input   rdat1, rdat2, returner,
     output  WEN, wsel, rsel1, rsel2, wdat
   );
 endinterface

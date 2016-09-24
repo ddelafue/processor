@@ -1,24 +1,17 @@
 onerror {resume}
 quietly WaveActivateNextPane {} 0
-add wave -noupdate /system_tb/CLK
-add wave -noupdate /system_tb/nRST
+add wave -noupdate /system_tb/DUT/CPU/DP/CLK
+add wave -noupdate /system_tb/DUT/CPU/CLK
 add wave -noupdate /system_tb/DUT/CPU/DP/cuif/instr
-add wave -noupdate /system_tb/DUT/CPU/DP/pcif/ladd
-add wave -noupdate /system_tb/DUT/CPU/DP/PCS/new_pc
-add wave -noupdate /system_tb/DUT/CPU/DP/rfif/wdat
-add wave -noupdate /system_tb/DUT/CPU/DP/rfif/rdat1
-add wave -noupdate /system_tb/DUT/CPU/DP/rfif/rdat2
+add wave -noupdate -radix binary /system_tb/DUT/CPU/DP/CU/rinstrop
+add wave -noupdate /system_tb/DUT/CPU/DP/memif/reg_wro
+add wave -noupdate /system_tb/DUT/CPU/DP/dpif/dmemstore
+add wave -noupdate /system_tb/DUT/CPU/DP/excif/wdato
+add wave -noupdate -radix binary /system_tb/DUT/CPU/DP/CU/iinstrop
 add wave -noupdate /system_tb/DUT/CPU/DP/RU/register
-add wave -noupdate /system_tb/DUT/CPU/DP/rfif/WEN
-add wave -noupdate /system_tb/DUT/CPU/DP/rqif/dhiti
-add wave -noupdate /system_tb/DUT/CPU/DP/rqif/iREN
-add wave -noupdate /system_tb/DUT/CPU/DP/rqif/ihiti
-add wave -noupdate /system_tb/DUT/CPU/DP/rqif/pcenable
-add wave -noupdate /system_tb/DUT/CPU/DP/RQ/state
-add wave -noupdate /system_tb/DUT/CPU/DP/RQ/old
-add wave -noupdate /system_tb/DUT/CPU/DP/rqif/instr
+add wave -noupdate /system_tb/DUT/CPU/DP/memif/WENo
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {864373 ps} 0}
+WaveRestoreCursors {{Cursor 1} {1645278 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 150
 configure wave -valuecolwidth 100
@@ -34,4 +27,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {623800 ps} {1019800 ps}
+WaveRestoreZoom {0 ps} {3125662 ps}

@@ -16,16 +16,16 @@ module control_unit (
 
 
   import cpu_types_pkg::*;
- // logic [5:0] iinstrop;
-  //logic [5:0] rinstrop;
+  logic [5:0] iinstrop;
+  logic [5:0] rinstrop;
   always_comb
   begin
     //cuif.halt = 1'd0;
    // if(cuif.dhit && cuif.ihit)
    // begin
      // $display("potato");
-     // iinstrop = cuif.instr[31:26];
-     // rinstrop = cuif.instr[5:0];
+      iinstrop = cuif.instr[31:26];
+      rinstrop = cuif.instr[5:0];
       cuif.regdst = 1'd0;
       cuif.reg_wr= 1'd0;
       cuif.rs = 5'd0;

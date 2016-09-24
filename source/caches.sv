@@ -1,4 +1,5 @@
-  Eric Villasenor
+/*
+Eric Villasenor
   evillase@gmail.com
 
   this block holds the i and d cache
@@ -12,7 +13,9 @@
 // cpu types
 `include "cpu_types_pkg.vh"
 
-module caches (
+module caches
+import cpu_types_pkg::*;
+(
   input logic CLK, nRST,
   datapath_cache_if.cache dcif,
   caches_if cif

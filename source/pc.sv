@@ -29,7 +29,7 @@ end
 
 always_comb
 begin
-  if(pcif.pcenable)
+  if(pcif.pcenable && nRST)
   begin
     //new_pc = pcif.ladd + 4;
     if(pcif.beq)
