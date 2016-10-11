@@ -18,11 +18,11 @@ interface  fetch_if;
   logic [31:0] iloado;
   logic [31:0] laddri;
   logic [31:0] laddro;
-
+  logic flush;
   logic fetch_en;
 
   modport fif (
-    input iloadi, laddri, fetch_en,
+    input iloadi, laddri, fetch_en, flush,
     output iloado, laddro
   );
 

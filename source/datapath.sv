@@ -53,6 +53,7 @@ fetch FCH(CLK, nRST, fif);
 decode DC(CLK, nRST, dcif);
 hazard_unit HZ(CLK, nRST, haz); //maybe wrong
 logic halter;
+logic hold;
 //assignments
 assign exif.inputimm = cuif.immOut;
 assign rfif.rsel1 = cuif.rs;
@@ -66,10 +67,14 @@ assign aluf.input1 = dcif.rdat1o;
 assign aluf.op = dcif.opo;
  //mux the input value for these things.
 assign dpif.dmemaddr = excif.outputo;
-assign pcif.beq = dcif.beqo;
-assign pcif.bne = dcif.bneo;
-assign pcif.jrsig = dcif.jrsigo;
-assign pcif.jumpval = dcif.pcAddrOuto;
+assign pcif.beq = excif.beqo;
+assign pcif.bne = excif.bneo;
+assign pcif.jrsig = excif.jrsigo;
+assign pcif.jsig = excif.jsigo;
+assign pcif.jumpval = excif.pcAddrOuto;
+assign pcif.jrval=  rfif.returner;
+assign pcif.brval = excif.brvalo;
+assign pcif.zero = excif.zeroo;
 assign dpif.dmemstore = excif.wdato;
 assign exif.shiftSig = cuif.shiftSig;
 assign halter = memif.halto;
@@ -84,10 +89,14 @@ assign fif.fetch_en = haz.fetch_en;
 /*assign excif.execute_en = haz.execute_en;
 assign memif.memory_en = haz.memory_en;
 assign dcif.decode_en = haz.decode_en;
-*/assign haz.memWEN = 1'd0;
-assign haz.memREN = 1'd0;
+*/assign haz.memWEN = 1'b0;
+assign haz.memREN = cuif.memread;
 assign pcif.pcenable = haz.fetch_en;
-
+assign haz.read1 = cuif.rs;
+assign haz.read2 = cuif.rt;
+assign haz.write1 = excif.wseli;
+assign haz.write3 = excif.wselo; //?
+assign haz.write2 = memif.wselo;
 //assigns to the inputs of the latches
 
 //FETCH IN
@@ -110,6 +119,10 @@ assign dcif.reg_wri =cuif.reg_wr;
 assign dcif.opi = cuif.outputop;
 assign dcif.decode_en =haz.decode_en;
 assign dcif.halti = cuif.halt;
+assign dcif.jsigi = cuif.jump;
+
+//assign dcif.beqi = cuif.beq;
+//assign dcif.bnei = cuif.bne;
 
 //EXECUTE IN
 assign excif.outputi = aluf.output1;
@@ -122,6 +135,13 @@ assign excif.write_sigi = dcif.write_sigo;
 assign excif.reg_wri = dcif.reg_wro;
 assign excif.execute_en = haz.execute_en;
 assign excif.halti = dcif.halto;
+assign excif.beqi = dcif.beqo;
+assign excif.bnei = dcif.bneo;
+assign excif.pcAddrOuti = dcif.pcAddrOuto;
+assign excif.brvali = dcif.immo;
+assign excif.jsigi = dcif.jsigo;
+assign excif.jrsigi = dcif.jrsigo;
+assign excif.laddri = dcif.laddro;
  //output or dmem
 //MEMORY IN
 assign memif.dloadi = dpif.dmemload;
@@ -130,22 +150,46 @@ assign memif.reg_wri = excif.reg_wro;
 assign memif.wseli = excif.wselo;
 assign memif.write_sigi = excif.write_sigo;
 assign memif.memory_en = haz.memory_en;
-assign excif.flush = haz.deassert;
+assign excif.flush = haz.edeassert;
 assign memif.halti = excif.halto;
 //
 //assign dpif.imemaddr = excif.imemaddro;
+//BRANCH STUFF
 
+assign  fif.flush = haz.fdeassert;
+assign  dcif.flush = haz.ddeassert;
+assign memif.flush = haz.mdeassert;
+assign haz.beq = excif.beqo;
+assign haz.bne = excif.bneo;
+assign haz.j = excif.jsigo;
+assign haz.jr = excif.jrsigo;
+assign haz.zero = excif.zeroo;
+
+logic hold2;
 
 always_ff @(posedge CLK, negedge nRST)
 begin
   if(!nRST)
   begin
     dpif.halt <= 1'd0;
-  end
-  else
-  begin
+    hold <= 1'd0;
+    hold2 <= 1'd0;
+ end
+ else
+ begin
+   if(hold == 1'd1)
+   begin
+    dpif.halt <= 1'd1;
+   end
+   else if(halter)
+   begin
     dpif.halt <= halter;
-  end
+    hold <= 1'd1;
+   end
+   else
+   begin
+   end
+end
 end
 
   // pc init
@@ -161,6 +205,15 @@ begin
   begin
     rfif.wsel = cuif.rd;
   end*/
+
+  if((excif.beqo&&excif.zeroo)|(excif.bneo && !excif.zeroo))
+  begin
+    pcif.brstart = excif.laddro;
+  end
+  else
+  begin
+    pcif.brstart = pcif.ladd;
+  end
   if(dcif.immSigo)
   begin
     aluf.input2 = dcif.immo;

@@ -46,6 +46,7 @@ begin
   #PERIOD;
   dpif.imemload = 32'hFE000000;
   #PERIOD;
+  //dpif.imemload = 32'000000020;
   $finish;
 end
 

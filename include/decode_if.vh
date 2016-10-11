@@ -25,9 +25,11 @@ interface decode_if;
     logic bnei;
     logic bneo;
     logic jrsigi;
+    logic jsigi;
+    logic jsigo;
     logic jrsigo;
-    logic pcAddrOuto;
-    logic pcAddrOuti;
+    logic [31:0] pcAddrOuto;
+    logic [31:0] pcAddrOuti;
     logic dRENi;
     logic dWENi;
     logic dRENo;
@@ -44,15 +46,15 @@ interface decode_if;
     logic immSigo;
     logic halti;
     logic halto;
-
+    logic flush;
     logic decode_en;
 
     modport dcif (
-    input rdat1i, rdat2i, immi, laddri, beqi,halti,
-bnei,jrsigi,pcAddrOuti,reg_wri,write_sigi, decode_en,
+    input rdat1i, flush, rdat2i, immi, laddri, beqi,halti,
+bnei,jrsigi,pcAddrOuti,reg_wri,write_sigi, decode_en, jsigi,
 opi,immSigi,dRENi,dWENi,wseli,
     output rdat1o, rdat2o, immo, laddro, beqo, bneo, jrsigo, pcAddrOuto,
-reg_wro, write_sigo, opo, immSigo,dRENo,dWENo,wselo,halto
+reg_wro, write_sigo, opo, immSigo,dRENo,dWENo,wselo,halto,jsigo
   );
 
 endinterface

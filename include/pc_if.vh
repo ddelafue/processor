@@ -18,10 +18,11 @@ interface pc_if;
   logic [31:0] jumpval;
   logic zero;
   logic [31:0] brval;
+  logic [31:0] brstart;
   logic pcenable;
 
   modport pcs (
-    input beq, bne, jrsig, jsig, jrval, jumpval,zero, brval, pcenable,
+    input beq, brstart, bne, jrsig, jsig, jrval, jumpval,zero, brval, pcenable,
     output ladd
     );
 

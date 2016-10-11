@@ -3,52 +3,98 @@
 module execute (
   input logic CLK,
   input logic nRST,
-  execute_if.excif exec);
+  execute_if.excif execute);
 
-always_ff @ (posedge CLK, negedge nRST)
+always_ff @(posedge CLK, negedge nRST)
 begin
-  if (!nRST|exec.flush)
+  if (!nRST)
   begin
-    exec.outputo <= 'b0;
-    exec.zeroo <= 1'b0;
-    exec.wdato <= 'b0;
-    exec.dWENo <= 'b0;
-    exec.dRENo <= 'b0;
-    exec.WENo <= 'b0;
-    exec.wselo <= 'b0;
-    exec.reg_wro <= 'b0;
-    exec.write_sigo <= 'b0;
-    exec.halto <= 'b0;
+    execute.outputo <= 'b0;
+    execute.zeroo <= 'b0;
+    execute.wdato <= 'b0;
+    execute.dWENo <= 'b0;
+    execute.dRENo <= 'b0;
+    execute.WENo <= 'b0;
+    execute.wselo <= 'b0;
+    execute.reg_wro <= 'b0;
+    execute.write_sigo <= 'b0;
+    execute.halto <= 'b0;
+    execute.brvalo <= 'b0;
+    execute.beqo <= 'b0;
+    execute.bneo <= 'b0;
+    execute.jsigo <= 'b0;
+    execute.jrsigo <= 'b0;
+    execute.pcAddrOuto <= 'b0;
+    execute.laddro <= 'b0;
+  end
+  else if(execute.flush)
+  begin
+    execute.outputo <= 'b0;
+    execute.zeroo <= 'b0;
+    execute.wdato <= 'b0;
+    execute.dWENo <= 'b0;
+    execute.dRENo <= 'b0;
+    execute.WENo <= 'b0;
+    execute.wselo <= 'b0;
+    execute.reg_wro <= 'b0;
+    execute.write_sigo <= 'b0;
+    execute.halto <= 'b0;
+    execute.brvalo <= 'b0;
+    execute.beqo <= 'b0;
+    execute.bneo <= 'b0;
+    execute.jsigo <= 'b0;
+    execute.jrsigo <= 'b0;
+    execute.pcAddrOuto <= 'b0;
+    execute.laddro <= 'b0;
   end
   else
   begin
-    if (exec.execute_en)
+    if (execute.execute_en)
     begin
-      exec.outputo <= exec.outputi;
-      exec.zeroo <= exec.zeroi;
-      exec.wdato <= exec.wdati;
-      exec.dWENo <= exec.dWENi;
-      exec.dRENo <= exec.dRENi;
-      exec.WENo <= exec.WENi;
-      exec.wselo <= exec.wseli;
-      exec.reg_wro <= exec.reg_wri;
-      exec.write_sigo <= exec.write_sigi;
-      exec.halto <= exec.halti;
+      execute.outputo <= execute.outputi;
+      execute.zeroo <= execute.zeroi;
+      execute.wdato <= execute.wdati;
+      execute.dWENo <= execute.dWENi;
+      execute.dRENo <= execute.dRENi;
+      execute.WENo <= execute.WENi;
+      execute.wselo <= execute.wseli;
+      execute.reg_wro <= execute.reg_wri;
+      execute.write_sigo <= execute.write_sigi;
+      execute.halto <= execute.halti;
+      execute.brvalo <= execute.brvali;
+      execute.jsigo <= execute.jsigi;
+      execute.jrsigo <= execute.jrsigi;
+      execute.pcAddrOuto <= execute.pcAddrOuti;
+      execute.beqo <= execute.beqi;
+      execute.bneo <= execute.bnei;
+      execute.laddro <= execute.laddri;
     end
     else
     begin
-      exec.outputo <= exec.outputo;
-      exec.zeroo <= exec.zeroo;
-      exec.wdato <= exec.wdato;
-      exec.dWENo <= exec.dWENo;
-      exec.dRENo <= exec.dRENo;
-      exec.WENo <= exec.WENo;
-      exec.wselo <= exec.wselo;
-      exec.reg_wro <= exec.reg_wro;
-      exec.write_sigo <= exec.write_sigo;
-      exec.halto <= exec.halto;
+      execute.outputo <= execute.outputo;
+      execute.zeroo <= execute.zeroo;
+      execute.wdato <= execute.wdato;
+      execute.dWENo <= execute.dWENo;
+      execute.dRENo <= execute.dRENo;
+      execute.WENo <= execute.WENo;
+      execute.wselo <= execute.wselo;
+      execute.reg_wro <= execute.reg_wro;
+      execute.write_sigo <= execute.write_sigo;
+      execute.halto <= execute.halto;
+      execute.brvalo <= execute.brvalo;
+      execute.jsigo <= execute.jsigo;
+      execute.jrsigo <= execute.jrsigo;
+      execute.pcAddrOuto <= execute.pcAddrOuto;
+      execute.beqo <= execute.beqo;
+      execute.bneo <= execute.bneo;
+      execute.laddro <= execute.laddro;
     end
   end
 end
 
+/*always_comb
+begin
+  //i need to bring all the things above to here and make copy of the signals...
+  //lmao
+*/
 endmodule

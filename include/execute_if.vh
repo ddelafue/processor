@@ -34,13 +34,26 @@ interface execute_if;
   logic execute_en;
   logic halti;
   logic halto;
-
+  logic beqi;
+  logic bnei;
+  logic beqo;
+  logic bneo;
+  logic jsigi;
+  logic jsigo;
+  logic jrsigi;
+  logic jrsigo;
+  logic [31:0] pcAddrOuti;
+  logic [31:0] pcAddrOuto;
+  logic [31:0] brvali;
+  logic [31:0] brvalo;
+  logic [31:0] laddri;
+  logic [31:0] laddro;
 
     modport excif (
-    input flush,outputi, zeroi, wdati, dWENi,dRENi,WENi,wseli,reg_wri,
-write_sigi, execute_en,halti,
-    output outputo, zeroo, wdato, dWENo, dRENo,WENo,wselo, reg_wro,
-write_sigo,halto
+    input laddri, flush,outputi, zeroi, wdati, dWENi,dRENi,WENi,wseli,reg_wri,
+write_sigi, execute_en,halti, beqi, bnei,jsigi,jrsigi, pcAddrOuti, brvali,
+    output laddro, outputo, zeroo, wdato, dWENo, dRENo,WENo,wselo, reg_wro,
+write_sigo,halto, beqo, bneo, jsigo, jrsigo, pcAddrOuto, brvalo
   );
 
 endinterface

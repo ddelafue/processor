@@ -25,7 +25,31 @@ begin
     dec.dWENo <= 'b0;
     dec.wselo <= 'b0;
     dec.halto <= 'b0;
+    dec.jsigo <= 'b0;
+    dec.jrsigo <= 'b0;
   end
+  else if(dec.flush)
+  begin
+    dec.rdat1o <= 'b0;
+    dec.rdat2o <= 'b0;
+    dec.immo <= 'b0;
+    dec.laddro <= 'b0;
+    dec.beqo <= 'b0;
+    dec.bneo <= 'b0;
+    dec.jrsigo <= 'b0;
+    dec.pcAddrOuto <= 'b0;
+    dec.reg_wro <= 'b0;
+    dec.write_sigo <= 'b0;
+    dec.opo <= 'b0;
+    dec.immSigo <= 'b0;
+    dec.dRENo <= 'b0;
+    dec.dWENo <= 'b0;
+    dec.wselo <= 'b0;
+    dec.halto <= 'b0;
+    dec.jsigo <= 'b0;
+    dec.jrsigo <= 'b0;
+  end
+
   else
   begin
     if (dec.decode_en)
@@ -46,6 +70,9 @@ begin
       dec.dWENo <= dec.dWENi;
       dec.wselo <= dec.wseli;
       dec.halto <= dec.halti;
+      dec.jsigo <= dec.jsigi;
+      dec.jrsigo <= dec.jrsigi;
+
    end
     else
     begin
@@ -65,6 +92,8 @@ begin
       dec.dWENo <= dec.dWENo;
       dec.wselo <= dec.wselo;
       dec.halto <= dec.halto;
+      dec.jsigo <= dec.jsigo;
+      dec.jrsigo <= dec.jrsigo;
   end
   end
 end

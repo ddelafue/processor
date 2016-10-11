@@ -17,6 +17,16 @@ begin
     mem.write_sigo <= 'b0;
     mem.halto <= 'b0;
   end
+  else if(mem.flush)
+  begin
+    mem.dloado <= 'b0;
+    mem.aluo <= 'b0;
+    mem.WENo <= 'b0;
+    mem.reg_wro <= 'b0;
+    mem.wselo <= 'b0;
+    mem.write_sigo <= 'b0;
+    mem.halto <= 'b0;
+  end
   else
   begin
     if (mem.memory_en)

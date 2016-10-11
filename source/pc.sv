@@ -36,22 +36,22 @@ begin
     begin
       if(pcif.zero)
       begin
-        new_pc = pcif.ladd + (pcif.brval<<2) +4;
+        new_pc = /*pcif.ladd*/ pcif.brstart + (pcif.brval<<2) +4;
       end
       else
       begin
-        new_pc = pcif.ladd + 4;
+        new_pc = pcif.brstart + 4;
       end
     end
     else if(pcif.bne)
     begin
       if(!pcif.zero)
       begin
-        new_pc = pcif.ladd + (pcif.brval<<2) +4;
+        new_pc = /*pcif.ladd*/ pcif.brstart + (pcif.brval<<2) +4;
       end
       else
       begin
-        new_pc = pcif.ladd + 4;
+        new_pc = pcif.brstart + 4;
       end
     end
 

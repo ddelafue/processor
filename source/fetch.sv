@@ -12,6 +12,12 @@ begin
     fet.iloado <= 'b0;
     fet.laddro <= 'b0;
   end
+  else if(fet.flush)
+  begin
+    fet.iloado <= 'b0;
+    fet.laddro <= 'b0;
+  end
+
   else
   begin
     if (fet.fetch_en)
