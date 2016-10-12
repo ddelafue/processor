@@ -143,7 +143,7 @@ module control_unit (
                     cuif.beq = 1'd1;
                     cuif.reg_wr = 1'd0;
                     cuif.immSig = 1'd0;
-                    cuif.zero = 1'd1;
+                   // cuif.zero = 1'd1;
                   end
 
             BNE : begin
@@ -151,7 +151,7 @@ module control_unit (
                     cuif.bne = 1'd1;
                     cuif.reg_wr = 1'd0;
                     cuif.immSig = 1'd0;
-                    cuif.zero = 1'd1;
+                   // cuif.zero = 1'd1;
                   end
 
             ADDI : begin

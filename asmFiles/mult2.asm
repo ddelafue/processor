@@ -7,14 +7,10 @@
   org 0x0000
 
   addi $29, $0, 65532
-  addi $10, $0, 4
+  addi $2, $0, 4
   addi $14, $0, 1 #myone
-  addi $11, $0, 4
+  addi $1, $0, 4
   addi $12, $0, 32
-  push $10
-  push $11
-  pop $1
-  pop $2
   addi $3, $0, 0
   addi $23, $0, 0
   multiply:
@@ -36,12 +32,4 @@
     J clear
   end:
   halt
-
-
-  #addi $29, $29, -4
-  #w $10, 4($29)
-  #zero
-  #addi $29, $29, -4
-  #sw $11, 4($29)
-
 

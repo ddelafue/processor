@@ -1,9 +1,12 @@
 `include "execute_if.vh"
+`include "cpu_types_pkg.vh"
 
 module execute (
   input logic CLK,
   input logic nRST,
   execute_if.excif execute);
+
+  import cpu_types_pkg::*;
 
 always_ff @(posedge CLK, negedge nRST)
 begin
@@ -26,7 +29,37 @@ begin
     execute.jrsigo <= 'b0;
     execute.pcAddrOuto <= 'b0;
     execute.laddro <= 'b0;
+    execute.execute_opcodeo <= opcode_t'('b0);
   end
+
+/*  else if(execute.flush && (execute.execute_opcodeo == SW ||
+execute.execute_opcodeo == LW))
+  begin
+/*    execute.outputo <= 'b0;
+    execute.zeroo <= 'b0;
+    execute.wdato <= 'b0;
+    execute.dWENo <= 'b0;
+    execute.dRENo <= 'b0;
+    execute.WENo <= 'b0;
+    execute.wselo <= 'b0;
+    execute.reg_wro <= 'b0;
+    execute.write_sigo <= 'b0;
+    execute.halto <= 'b0;
+    execute.brvalo <= 'b0;
+    execute.beqo <= 'b0;
+    execute.bneo <= 'b0;
+    execute.jsigo <= 'b0;
+    execute.jrsigo <= 'b0;
+    execute.pcAddrOuto <= 'b0;
+    execute.laddro <= 'b0;
+    execute.execute_opcodeo <= opcode_t'('b0);
+
+
+    execute.dRENo <= 'b0;
+    execute.dWENo <= 'b0;
+    execute.outputo <= execute.outputi;
+  end*/
+
   else if(execute.flush)
   begin
     execute.outputo <= 'b0;
@@ -46,6 +79,7 @@ begin
     execute.jrsigo <= 'b0;
     execute.pcAddrOuto <= 'b0;
     execute.laddro <= 'b0;
+    execute.execute_opcodeo <= opcode_t'('b0);
   end
   else
   begin
@@ -68,6 +102,7 @@ begin
       execute.beqo <= execute.beqi;
       execute.bneo <= execute.bnei;
       execute.laddro <= execute.laddri;
+      execute.execute_opcodeo <= execute.execute_opcodei;
     end
     else
     begin
@@ -88,6 +123,7 @@ begin
       execute.beqo <= execute.beqo;
       execute.bneo <= execute.bneo;
       execute.laddro <= execute.laddro;
+      execute.execute_opcodeo <= execute.execute_opcodeo;
     end
   end
 end

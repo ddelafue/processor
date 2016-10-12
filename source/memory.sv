@@ -1,9 +1,12 @@
 `include "memory_if.vh"
+`include "cpu_types_pkg.vh"
 
 module memory(
   input logic CLK,
   input logic nRST,
   memory_if.memif mem);
+
+  import cpu_types_pkg::*;
 
 always_ff @ (posedge CLK, negedge nRST)
 begin
@@ -16,7 +19,12 @@ begin
     mem.wselo <= 'b0;
     mem.write_sigo <= 'b0;
     mem.halto <= 'b0;
+    mem.memory_opcodeo <= opcode_t'('b0);
   end
+ /* else if(mem.dRENi)
+  begin
+    mem.dloado <= mem.dloadi;
+  end*/
   else if(mem.flush)
   begin
     mem.dloado <= 'b0;
@@ -26,11 +34,13 @@ begin
     mem.wselo <= 'b0;
     mem.write_sigo <= 'b0;
     mem.halto <= 'b0;
+    mem.memory_opcodeo <= opcode_t'('b0);
   end
   else
   begin
     if (mem.memory_en)
     begin
+      //changed back below
       mem.dloado <= mem.dloadi;
       mem.aluo <= mem.alui;
       mem.WENo <= mem.WENi;
@@ -38,6 +48,7 @@ begin
       mem.wselo <= mem.wseli;
       mem.write_sigo <= mem.write_sigi;
       mem.halto <= mem.halti;
+      mem.memory_opcodeo <= mem.memory_opcodei;
     end
     else
     begin
@@ -48,6 +59,7 @@ begin
       mem.wselo <= mem.wselo;
       mem.write_sigo <= mem.write_sigo;
       mem.halto <= mem.halto;
+      mem.memory_opcodeo <= mem.memory_opcodeo;
     end
   end
 end

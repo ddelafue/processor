@@ -20,7 +20,7 @@ begin
  // haz.another = 1'd1;
   enable = 4'h0;
 
- if(((haz.read1 == haz.write1)||(haz.read2 == haz.write1))&& !(haz.read1 == 32'd0 &&
+/* if(((haz.read1 == haz.write1)||(haz.read2 == haz.write1))&& !(haz.read1 == 32'd0 &&
 haz.read2 == 32'd0 && haz.write1 == 32'd0)&&(haz.write1 != 32'd0))
  begin
     enable = 4'h5;
@@ -39,14 +39,23 @@ begin
   enable = 4'h5;
   haz.ddeassert = 1'd1;
 end
-
 else
-begin
+begin*/
+  if(haz.dW && !(haz.beq&&haz.zero)&& !(haz.bne&& !haz.zero))
+  begin
+    enable = 4'h5;
+    haz.ddeassert = 1'd1;
+  end
+  else
+  begin
   unique casez({haz.dhit, haz.ihit, haz.beq, haz.bne, haz.zero,haz.jr, haz.j})
   7'b0000000 : enable = 4'h0;
   7'b1000000 :  begin
-                  enable = 4'h1;
-                  haz.edeassert = 1'd1;
+                 enable = 4'h5;
+                 // gobacktocodefirsttwo enable = 4'h1;
+                 // haz.edeassert = 1'd1;
+                  //haz.mdeassert = 1'd1;
+                  //haz.fwd = 1'd1;
                 end
   7'b0100000 : enable = 4'hF;
   7'b0100001 : begin
@@ -71,6 +80,13 @@ begin
   7'b0101100 : begin
               enable = 4'hF;
              end
+  7'b0010100 : begin
+               enable = 4'h3;
+               haz.fdeassert = 1'd1;
+               haz.ddeassert = 1'd1;
+               haz.edeassert = 1'd1;
+              end
+
   7'b0110000 : enable = 4'hF;
   7'b0110100 : begin
               enable = 4'h3;

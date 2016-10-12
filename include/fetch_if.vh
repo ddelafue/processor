@@ -20,10 +20,12 @@ interface  fetch_if;
   logic [31:0] laddro;
   logic flush;
   logic fetch_en;
+  opcode_t fetch_opcodei;
+  opcode_t fetch_opcodeo;
 
   modport fif (
-    input iloadi, laddri, fetch_en, flush,
-    output iloado, laddro
+    input iloadi, laddri, fetch_en, flush, fetch_opcodei,
+    output iloado, laddro, fetch_opcodeo
   );
 
 endinterface

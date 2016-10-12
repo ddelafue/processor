@@ -30,7 +30,7 @@ notfound:
 item_position:
   cfw 0                       # should be found at 0x0124
 search_item:
-  cfw 0x5c6f
+  cfw 0x4109
 list_length:
   cfw 100
 search_list:
@@ -76,6 +76,7 @@ search_list:
   cfw 0xd11e
   cfw 0x9222
   cfw 0xacdb
+
   cfw 0x1038
   cfw 0xab17
   cfw 0xf7ce
@@ -87,6 +88,7 @@ search_list:
   cfw 0x0bac
   cfw 0xd0db
   cfw 0x3552
+
   cfw 0xa6b0
   cfw 0x727f
   cfw 0x28e4
@@ -112,6 +114,7 @@ search_list:
   cfw 0xc4fc
   cfw 0xfb2f
   cfw 0xee5f
+
   cfw 0xfd30
   cfw 0xc540
   cfw 0xd5f1

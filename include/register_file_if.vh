@@ -17,7 +17,7 @@ interface register_file_if;
   logic     WEN;
   regbits_t wsel, rsel1, rsel2;
   word_t    wdat, rdat1, rdat2;
-  logic returner;
+  logic  [31:0] returner;
   // register file ports
   modport rf (
     input   WEN, wsel, rsel1, rsel2, wdat,

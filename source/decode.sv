@@ -1,9 +1,12 @@
 `include "decode_if.vh"
+`include "cpu_types_pkg.vh"
 
 module decode (
   input logic CLK,
   input logic nRST,
   decode_if.dcif dec);
+
+  import cpu_types_pkg::*;
 
 always_ff @ (posedge CLK, negedge nRST)
 begin
@@ -27,6 +30,9 @@ begin
     dec.halto <= 'b0;
     dec.jsigo <= 'b0;
     dec.jrsigo <= 'b0;
+    dec.read1o <= 'b0;
+    dec.read2o <= 'b0;
+    dec.decode_opcodeo <= opcode_t'('b0);
   end
   else if(dec.flush)
   begin
@@ -48,6 +54,9 @@ begin
     dec.halto <= 'b0;
     dec.jsigo <= 'b0;
     dec.jrsigo <= 'b0;
+    dec.read1o <= 'b0;
+    dec.read2o <= 'b0;
+    dec.decode_opcodeo <= opcode_t'('b0);
   end
 
   else
@@ -72,7 +81,9 @@ begin
       dec.halto <= dec.halti;
       dec.jsigo <= dec.jsigi;
       dec.jrsigo <= dec.jrsigi;
-
+      dec.read1o <= dec.read1i;
+      dec.read2o <= dec.read2i;
+      dec.decode_opcodeo <= dec.decode_opcodei;
    end
     else
     begin
@@ -94,6 +105,9 @@ begin
       dec.halto <= dec.halto;
       dec.jsigo <= dec.jsigo;
       dec.jrsigo <= dec.jrsigo;
+      dec.read1o <= dec.read1o;
+      dec.read2o <= dec.read2o;
+      dec.decode_opcodeo <= dec.decode_opcodeo;
   end
   end
 end

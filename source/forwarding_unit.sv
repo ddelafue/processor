@@ -6,8 +6,6 @@ module forwarding_unit (
 
   logic zeros1, zeros2, zeros3;
 
-always_comb
-begin
 
   assign zeros1 = (fuf.read1 == 32'd0) && (fuf.read2 == 32'd0)
 && (fuf.write1 == 32'd0);
@@ -16,9 +14,11 @@ begin
   assign zeros3 = (fuf.read1 == 32'd0) && (fuf.read2 == 32'd0)
 && (fuf.write3 == 32'd0);
 
+always_comb
+begin
   if ((fuf.read1 == fuf.write1) && !zeros1)
   begin
-    fuf.forward1 = 1'b1;
+//    fuf.forward1 = 1'b1;
     fuf.forw_en1 = 1'b1;
     //fix to the correct output
   end

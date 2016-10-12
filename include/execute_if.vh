@@ -24,8 +24,8 @@ interface execute_if;
   logic dRENo;
   logic WENi;
   logic WENo;
-  logic [31:0] wseli;
-  logic [31:0] wselo;
+  logic [4:0] wseli;
+  logic [4:0] wselo;
   logic reg_wri; //wen
   logic reg_wro;
   logic write_sigi; //which thing is written
@@ -48,12 +48,15 @@ interface execute_if;
   logic [31:0] brvalo;
   logic [31:0] laddri;
   logic [31:0] laddro;
+  opcode_t execute_opcodei;
+  opcode_t execute_opcodeo;
 
     modport excif (
     input laddri, flush,outputi, zeroi, wdati, dWENi,dRENi,WENi,wseli,reg_wri,
 write_sigi, execute_en,halti, beqi, bnei,jsigi,jrsigi, pcAddrOuti, brvali,
+execute_opcodei,
     output laddro, outputo, zeroo, wdato, dWENo, dRENo,WENo,wselo, reg_wro,
-write_sigo,halto, beqo, bneo, jsigo, jrsigo, pcAddrOuto, brvalo
+write_sigo,halto, beqo, bneo, jsigo, jrsigo, pcAddrOuto, brvalo, execute_opcodeo
   );
 
 endinterface

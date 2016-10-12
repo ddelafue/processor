@@ -4,11 +4,11 @@
 interface forwarding_unit_if;
 
   //inputs
-  logic [31:0] read1;
-  logic [31:0] read2;
-  logic [31:0] write1;
-  logic [31:0] write2;
-  logic [31:0] write3;
+  logic [4:0] read1;
+  logic [4:0] read2;
+  logic [4:0] write1;
+  logic [4:0] write2;
+  logic [4:0] write3;
 
   //outputs
   logic [31:0] forward1;
