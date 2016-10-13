@@ -7,12 +7,12 @@ module forwarding_unit (
   logic zeros1, zeros2, zeros3;
 
 
-  assign zeros1 = (fuf.read1 == 32'd0) && (fuf.read2 == 32'd0)
-&& (fuf.write1 == 32'd0);
-  assign zeros2 = (fuf.read1 == 32'd0) && (fuf.read2 == 32'd0)
-&& (fuf.write2 == 32'd0);
-  assign zeros3 = (fuf.read1 == 32'd0) && (fuf.read2 == 32'd0)
-&& (fuf.write3 == 32'd0);
+  assign zeros1 = ((fuf.read1 == 4'd0) || (fuf.read2 == 4'd0))
+&& (fuf.write1 == 4'd0);
+  assign zeros2 = ((fuf.read1 == 4'd0) || (fuf.read2 == 4'd0))
+&& (fuf.write2 == 4'd0);
+  assign zeros3 = (fuf.read1 == 4'd0) && (fuf.read2 == 4'd0)
+&& (fuf.write3 == 4'd0);
 
 always_comb
 begin

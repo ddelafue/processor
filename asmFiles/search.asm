@@ -30,7 +30,7 @@ notfound:
 item_position:
   cfw 0                       # should be found at 0x0124
 search_item:
-  cfw 0x4109
+  cfw 0x5c6f
 list_length:
   cfw 100
 search_list:

@@ -41,7 +41,8 @@ begin
 end
 else
 begin*/
-  if(haz.dW && !(haz.beq&&haz.zero)&& !(haz.bne&& !haz.zero))
+  if(haz.dW && !(haz.beq&&haz.zero)&& !(haz.bne&& !haz.zero)&& !(haz.j) &&
+!(haz.jr))
   begin
     enable = 4'h5;
     haz.ddeassert = 1'd1;
