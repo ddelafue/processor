@@ -18,7 +18,7 @@
 
 module system_tb;
   // clock period
-  parameter PERIOD = 2;
+  parameter PERIOD = 10;
 
   // signals
   logic CLK = 1, nRST;
