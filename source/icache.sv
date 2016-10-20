@@ -30,6 +30,7 @@ always_ff @ (posedge CLK, negedge nRST)
 begin
   if(!nRST)
   begin
+    icif.ihit <= 1'd0;
     //cblocks <= '{default:'0}; cannot be driven in a ff block and comb block
     //tagspace <= '{default:'0}; these are now not set to zero
   end
@@ -48,39 +49,45 @@ begin
   instrhit = 1'd0;
   if(!nRST)
   begin
+   icif.memout = '{default:'0};
    validarray = '{default:'0};
    cblocks = '{default:'0};
    ivals = '{default:'0};
   end
-  if(icif.iREN && !icif.dREN && !icif.dWEN ) //add a condition to make sure dREN or dWEN isn't set from dcache??
+  else
   begin
-    cif.iaddr = icif.address;
-    cif.iREN = icif.iREN;
-    if(icif.tag == ivals[icif.indx].tag && validarray[icif.indx])
+    if(icif.iREN && !icif.dREN && !icif.dWEN ) //add a condition to make sure dREN or dWEN isn't set from dcache??
     begin
-      icif.memout = cblocks[icif.indx];
-      instrhit = 1'd1;
-    end
-
-    else
-    begin
-     /// cif.iaddr = icif.address; //you can only do this in a 1 way path
-      //cif.iREN = icif.iREN;
-      //stop here
-      if(cif.iwait == 1'd0)
+      cif.iREN = 1'd0;
+      cif.iaddr= 32'd0;
+      //cif.iaddr = icif.address;
+      if((icif.tag == ivals[icif.indx].tag) && validarray[icif.indx] == 1'd1)
       begin
-        cblocks[icif.indx] = cif.iload;
-        ivals[icif.indx].tag = icif.tag;
-        icif.memout = cif.iload;
+        icif.memout = cblocks[icif.indx];
         instrhit = 1'd1;
-        validarray[icif.indx] = 1'd1;
-        //miss situation, you need to make the datapath and everything wait while
-        //the cif(the ram) to get the new data, store it in cblocks, replace the
-        //tag and grab the block of data. The memory address
+      end
+
+      else
+      begin
+        /// cif.iaddr = icif.address; //you can only do this in a 1 way path
+        //cif.iREN = icif.iREN;
+        //stop here
+        cif.iREN = 1'd1;
+        cif.iaddr = icif.address;
+        if(cif.iwait == 1'd0)
+        begin
+          cblocks[icif.indx] = cif.iload;
+          ivals[icif.indx].tag = icif.tag;
+         //icif.memout = cif.iload; ??
+          //instrhit = 1'd1;         ??
+          validarray[icif.indx] = 1'd1;
+          //miss situation, you need to make the datapath and everything wait while
+          //the cif(the ram) to get the new data, store it in cblocks, replace the
+          //tag and grab the block of data. The memory address
+        end
       end
     end
   end
-
 //TA said we need an else here for iaddr and iREN
 
   //job here is if iREN then to compare the tag coming in from cif to the tag
