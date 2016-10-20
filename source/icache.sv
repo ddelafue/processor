@@ -35,13 +35,13 @@ begin
   end
   else
   begin
-    //icif.ihit <= instrhit;
+    icif.ihit <= instrhit;
   end
   //checks for iREN here
 
 end
 
-assign icif.ihit = instrhit;
+//assign icif.ihit = instrhit;
 
 always_comb
 begin
