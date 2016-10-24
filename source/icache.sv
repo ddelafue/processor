@@ -14,29 +14,41 @@ module icache
 
 import cpu_types_pkg::*;
 icachef_t [15:0] ivals;
-//import icache_pkg::*;
-//data space for icache. 512 bits which is 8 bytes which means
-//there are 8 frames of one word each
 logic [15:0] validarray;
+logic [25:0] test;
+logic test2;
+logic [31:0] nextmemout;
+logic [15:0] nextvalidarray;
+icachef_t [15:0] nextival;
+logic nextiREN;
+logic [31:0] nextiaddr;
 
-word_t [15:0] cblocks; //ALL THE SPACE NEEDED for blocks
-//the tag for the code should be the 32 - 3(size of index) - 2(byte offset bits)
-//which is 27 bits
-//tags [3:0] tagspace; //holds space for the corresponding blocks from 0-15
+word_t [15:0] cblocks;
+word_t [15:0] nextcblock;
+
 logic instrhit;
-//assign cif.iaddr= icif.address;
-//assign cif.iREN = icif.iREN;
 always_ff @ (posedge CLK, negedge nRST)
 begin
   if(!nRST)
   begin
-    icif.ihit <= 1'd0;
-    //cblocks <= '{default:'0}; cannot be driven in a ff block and comb block
-    //tagspace <= '{default:'0}; these are now not set to zero
+    //icif.ihit <= 1'd0;
+    //icif.memout <= 32'b0;
+    //cblocks <= '{default: '0};
+    validarray <= '{default:'0};
+    ivals <= '{default:'0};
+    //cif.iREN <= 'd0;
+    //cif.iaddr <= 32'd0;
   end
   else
   begin
-    icif.ihit <= instrhit;
+    //icif.ihit <= instrhit;
+    //icif.memout <= nextmemout;
+    //cblocks <= nextcblock;
+    ivals <= nextival;
+    validarray <= nextvalidarray;
+   // cif.iREN <= nextiREN;
+   // cif.iaddr <= nextiaddr;
+
   end
   //checks for iREN here
 
@@ -44,54 +56,60 @@ end
 
 //assign icif.ihit = instrhit;
 
+assign test = ivals[icif.indx].tag;
+assign test2 = validarray[icif.indx];
+assign icif.ihit = instrhit;
+assign icif.memout = cblocks[icif.indx];
+assign cif.iaddr = icif.address;
+assign cblocks = nextcblock;
+assign cif.iREN = nextiREN;
 always_comb
 begin
-  instrhit = 1'd0;
+
   if(!nRST)
   begin
-   icif.memout = '{default:'0};
-   validarray = '{default:'0};
-   cblocks = '{default:'0};
-   ivals = '{default:'0};
+   //nextmemout = '{default:'0};
+   nextvalidarray = '{default:'0};
+   nextcblock = '{default:'0};
+   nextival = '{default:'0};
+   nextiREN = 1'd0;
+   nextiaddr = 32'd0;
+   instrhit = 1'd0;
+
   end
-  else
-  begin
-    if(icif.iREN && !icif.dREN && !icif.dWEN ) //add a condition to make sure dREN or dWEN isn't set from dcache??
+  else if((icif.iREN == 1'd1) && (icif.dREN == 1'd0) && (icif.dWEN == 1'd0)) //add a condition to make sure dREN or dWEN isn't set from dcache??
     begin
-      cif.iREN = 1'd0;
-      cif.iaddr= 32'd0;
-      //cif.iaddr = icif.address;
-      if((icif.tag == ivals[icif.indx].tag) && validarray[icif.indx] == 1'd1)
+      nextiREN = 1'd0;
+      nextiaddr= 32'd0;
+      instrhit = 1'd0;
+      //$display("tag is %d , ivals is %d and valid array is %d",icif.tag,
+//ivals[icif.indx].tag, validarray[icif.indx] );
+
+      if((icif.tag == ivals[icif.indx].tag) && (validarray[icif.indx] == 1'd1))
       begin
-        icif.memout = cblocks[icif.indx];
+       // $display("maybe");
+       // nextmemout = cblocks[icif.indx];
         instrhit = 1'd1;
       end
 
       else
       begin
-        /// cif.iaddr = icif.address; //you can only do this in a 1 way path
-        //cif.iREN = icif.iREN;
-        //stop here
-        cif.iREN = 1'd1;
-        cif.iaddr = icif.address;
+       // $display("hopefully not infinite");
+        nextiREN = 1'd1;
+        //nextiaddr = icif.address;
         if(cif.iwait == 1'd0)
         begin
-          cblocks[icif.indx] = cif.iload;
-          ivals[icif.indx].tag = icif.tag;
-         //icif.memout = cif.iload; ??
-          //instrhit = 1'd1;         ??
-          validarray[icif.indx] = 1'd1;
-          //miss situation, you need to make the datapath and everything wait while
-          //the cif(the ram) to get the new data, store it in cblocks, replace the
-          //tag and grab the block of data. The memory address
+          nextcblock[icif.indx] = cif.iload;
+          nextival[icif.indx].tag = icif.tag;
+          nextvalidarray[icif.indx] = 1'd1;
+          instrhit = 1'd0;
         end
       end
     end
+    else
+    begin
+      instrhit = 1'd0;
+     // $display("dcache should take over atm");
+    end
   end
-//TA said we need an else here for iaddr and iREN
-
-  //job here is if iREN then to compare the tag coming in from cif to the tag
-  //that we alre
-end
-
 endmodule

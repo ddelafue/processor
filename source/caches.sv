@@ -58,7 +58,7 @@ import cpu_types_pkg::*;
   assign dcif.dhit = dcaif.dhit;
   assign dcif.dmemload = dcaif.memout;
   assign dcif.imemload = icaif.memout;
-
+  assign dcif.flushed = dcaif.flushed;
 
 //to norm work will have to comment out to run pipeline w/o cache and uncomment
 //beloowww. Everything below this for now it wrong until I assign the outputs
