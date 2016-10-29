@@ -40,6 +40,7 @@ logic haltback;
 logic [15:0] dirtyarray; // 16 frames that are dirty
 logic [15:0] next_dirtyarray;
 logic [7:0] next_lastarray;
+//logic next_replace;
 //logic [31:0] next_memout;
 int next_frame;
 logic nextflushed;
@@ -54,7 +55,7 @@ word_t [31:0] cblocks; //all the space needed for blocks. in word_t so it
 word_t [31:0] next_cblocks;                      //corresponds to 15 frames.
 
 //dvals [15:0] tagspace; //holds space, should hold the tags of each frame even if
-                     //they're in sets of two
+                     //the437lre in sets of two
 
 //dvals[0].tag = whatever
 
@@ -64,6 +65,10 @@ logic[15:0] validarray;
 logic[15:0] next_validarray;
 logic[7:0] lastarray;
 logic dahit;
+logic [31:0] hitcounter;
+logic [31:0] nexthitcounter;
+logic valid;
+logic nextvalid;
 int frame;
 //logic counter; //counts if we're at the first block or the second block in mem
                //operations
@@ -92,6 +97,8 @@ begin
     validarray <= '{default: '0};
     dirtyarray <= '{default: '0};
     dcif.flushed <= 1'd0;
+    hitcounter <= 32'd0;
+    valid <= 1'd0;
     //dcif.dhit <= 1'd0;
   end
   else
@@ -107,7 +114,10 @@ begin
     validarray <= next_validarray;
     dirtyarray <= next_dirtyarray;
     dcif.flushed <= nextflushed;
+    hitcounter <= nexthitcounter;
+    valid <= nextvalid;
     //dcif.dhit <= dahit;
+    //replace <= next_replace;
   end
 end
 
@@ -207,7 +217,7 @@ begin
           end
 
   REPLACE1: begin
-    //          replace= 1'd0;
+   //           replace= 1'd0;
               if(rep1)
               begin
              //   rep1 = 1'd0;
@@ -294,14 +304,20 @@ begin
 //   next_memout = '{default: '0};
    next_frame = '{default: '0};
    nextflushed = 1'd0;
+   nextvalid = 1'd0;
+   nexthitcounter = 32'd0;
   end
   else
   begin
+    nexthitcounter = hitcounter;
+    replace = 1'b0;
     next_cblocks = cblocks;
     next_lastarray = lastarray;
     next_dirtyarray = dirtyarray;
     next_validarray = validarray;
     next_dvals = dvals;
+    nextflushed = dcif.flushed;
+    nextvalid = valid;
 //    next_memout = dcif.memout;
     next_frame = frame;
     casez(state)
@@ -312,7 +328,6 @@ begin
       begin
         halt = 1'd1;
       end
-
       else if(dcif.dREN)
       begin
         //cif.dREN = dcif.dREN;
@@ -321,6 +336,14 @@ begin
 //          next_memout = cblocks[(dcif.indx*2)*2 + dcif.offset];
           next_lastarray[dcif.indx] = 1'd1;
           dahit = 1'd1;
+          if(valid == 1'd0)
+          begin
+            nexthitcounter = hitcounter + 1;
+          end
+          else
+          begin
+            nextvalid = 1'd0;
+          end
         end
         else if(dcif.tag == dvals[dcif.indx* 2 + 1].tag && validarray[dcif.indx*2
 +1])
@@ -328,37 +351,53 @@ begin
 //          next_memout = cblocks[(dcif.indx*2 +1)*2 +dcif.offset];
           next_lastarray[dcif.indx] = 1'd0;
           dahit = 1'd1;
+          if(valid == 1'd0)
+          begin
+            nexthitcounter = hitcounter + 1;
+          end
+          else
+          begin
+            nextvalid = 1'd0;
+          end
+
         end
         else
         begin
-
           if(lastarray[dcif.indx] == 1'd0)
           begin
             next_frame = dcif.indx*2;
             if(dirtyarray[next_frame] == 1'd1)
             begin
               dirty = 1'd1;
+              nextvalid = 1'd1;
+              replace = 1'b0;
             end
             else
             begin
+              nextvalid = 1'd1;
               replace = 1'd1;
             end
-
-        end
+          end
         else
         begin
           next_frame = dcif.indx*2 + 1;
           if(dirtyarray[next_frame] == 1'd1)
           begin
             dirty = 1'd1;
+            nextvalid = 1'd1;
           end
           else
           begin
+            nextvalid = 1'd1;
             replace = 1'd1;
           end
         end
       end
     end
+
+
+
+
     else if(dcif.dWEN) //dwen
     begin
       if(dcif.tag == dvals[dcif.indx*2].tag && validarray[dcif.indx*2])
@@ -370,6 +409,16 @@ begin
           next_dirtyarray[dcif.indx*2] = 1'd1;
           next_dvals[dcif.indx*2].tag = dcif.tag;
           next_dvals[dcif.indx*2].idx = dcif.indx;
+          if(valid == 1'd0)
+          begin
+            nexthitcounter = hitcounter + 1;
+          end
+          else
+          begin
+            nextvalid = 1'd0;
+          end
+
+
         end
       else if(dcif.tag == dvals[dcif.indx* 2 + 1].tag && validarray[dcif.indx*2
 +1])
@@ -380,6 +429,14 @@ begin
           next_dirtyarray[dcif.indx*2 + 1] = 1'd1;
           next_dvals[dcif.indx*2 + 1].tag = dcif.tag;
           next_dvals[dcif.indx*2 + 1].idx = dcif.indx;
+          if(valid == 1'd0)
+          begin
+            nexthitcounter = hitcounter + 1;
+          end
+          else
+          begin
+            nextvalid = 1'd0;
+          end
       end
       else
       begin
@@ -390,10 +447,13 @@ begin
             if(dirtyarray[next_frame] == 1'd1)
             begin
               dirty = 1'd1;
+              nextvalid = 1'd1;
+              replace = 1'b0;
             end
             else
             begin
               replace = 1'd1;
+              nextvalid = 1'd1;
             end
 
         end
@@ -403,10 +463,13 @@ begin
           if(dirtyarray[next_frame] == 1'd1)
           begin
             dirty = 1'd1;
+            replace = 1'b0;
+            nextvalid = 1'd1;
           end
           else
           begin
             replace = 1'd1;
+            nextvalid = 1'd1;
           end
         end
 
@@ -418,6 +481,7 @@ begin
     end
     HALT: begin
     cif.dWEN = 1'd0;
+    replace = 1'b0;
     if(dirtyarray[count] == 1'd1 && count != 5'd16)
     begin
       haltto = 1'd1;
@@ -431,13 +495,20 @@ begin
     end
     else
     begin
-      finished = 1'd1;
-      nextflushed = 1'd1;
+      cif.dWEN = 1'd1;
+      cif.daddr = 32'h3100;
+      cif.dstore = hitcounter;
+      if(cif.dwait == 1'd0)
+      begin
+        finished = 1'd1;
+        nextflushed = 1'd1;
+      end
     end
   end
 
   HALT1: begin
            cif.dWEN = 1'd1;
+           replace = 1'b0;
            cif.daddr = {dvals[count].tag, dvals[count].idx, 1'b0, 2'b0};
            cif.dstore = cblocks[count*2];
            nextcount = count;
@@ -448,6 +519,7 @@ begin
            end
           end
   HALT2: begin
+           replace = 1'b0;
            cif.dWEN = 1'd1;
            cif.daddr = {dvals[count].tag, dvals[count].idx, 1'b1, 2'b0};
            cif.dstore = cblocks[count*2 + 1];
@@ -462,6 +534,8 @@ begin
 
 
   DIRTY1: begin
+            //valid = 1'd1;
+            replace = 1'b0;
             cif.dWEN = 1'd1;
             cif.daddr = {dvals[frame].tag, dvals[frame].idx, 1'b0, 2'b0};
             cif.dstore = cblocks[frame*2];
@@ -473,6 +547,8 @@ begin
           end
 
   DIRTY2: begin
+            //valid = 1'd1;
+            replace = 1'b0;
             cif.dWEN = 1'd1;
             cif.daddr = {dvals[frame].tag, dvals[frame].idx, 1'b1, 2'b0};
             cif.dstore = cblocks[frame*2 + 1];
@@ -485,6 +561,7 @@ begin
           end
 
   REPLACE1: begin
+              //valid = 1'd1;
               cif.dWEN = 1'd0;
               replace = 1'd0;
               cif.dREN = 1'd1;
@@ -500,6 +577,8 @@ begin
             end
 
   REPLACE2: begin
+              //valid = 1'd1;
+              replace = 1'b0;
               cif.dWEN = 1'd0;
               cif.dREN = 1'd1;
               cif.daddr = {dcif.tag, dcif.indx, 1'b1, 2'b0};

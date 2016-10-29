@@ -33,7 +33,7 @@ begin
   begin
     //icif.ihit <= 1'd0;
     //icif.memout <= 32'b0;
-    //cblocks <= '{default: '0};
+    cblocks <= '{default: '0};
     validarray <= '{default:'0};
     ivals <= '{default:'0};
     //cif.iREN <= 'd0;
@@ -43,7 +43,7 @@ begin
   begin
     //icif.ihit <= instrhit;
     //icif.memout <= nextmemout;
-    //cblocks <= nextcblock;
+    cblocks <= nextcblock;
     ivals <= nextival;
     validarray <= nextvalidarray;
    // cif.iREN <= nextiREN;
@@ -61,7 +61,7 @@ assign test2 = validarray[icif.indx];
 assign icif.ihit = instrhit;
 assign icif.memout = cblocks[icif.indx];
 assign cif.iaddr = icif.address;
-assign cblocks = nextcblock;
+//assign cblocks = nextcblock;
 assign cif.iREN = nextiREN;
 always_comb
 begin
@@ -78,38 +78,44 @@ begin
 
   end
   else if((icif.iREN == 1'd1) && (icif.dREN == 1'd0) && (icif.dWEN == 1'd0)) //add a condition to make sure dREN or dWEN isn't set from dcache??
-    begin
-      nextiREN = 1'd0;
-      nextiaddr= 32'd0;
-      instrhit = 1'd0;
+  begin
+    nextvalidarray = validarray;
+    nextcblock = cblocks;
+    nextival = ivals;
+    nextiREN = 1'd0;
+    nextiaddr= 32'd0;
+    instrhit = 1'd0;
       //$display("tag is %d , ivals is %d and valid array is %d",icif.tag,
 //ivals[icif.indx].tag, validarray[icif.indx] );
 
-      if((icif.tag == ivals[icif.indx].tag) && (validarray[icif.indx] == 1'd1))
-      begin
+    if((icif.tag == ivals[icif.indx].tag) && (validarray[icif.indx] == 1'd1))
+    begin
        // $display("maybe");
        // nextmemout = cblocks[icif.indx];
-        instrhit = 1'd1;
-      end
-
-      else
-      begin
-       // $display("hopefully not infinite");
-        nextiREN = 1'd1;
-        //nextiaddr = icif.address;
-        if(cif.iwait == 1'd0)
-        begin
-          nextcblock[icif.indx] = cif.iload;
-          nextival[icif.indx].tag = icif.tag;
-          nextvalidarray[icif.indx] = 1'd1;
-          instrhit = 1'd0;
-        end
-      end
+      instrhit = 1'd1;
     end
     else
     begin
-      instrhit = 1'd0;
-     // $display("dcache should take over atm");
+       // $display("hopefully not infinite");
+      nextiREN = 1'd1;
+        //nextiaddr = icif.address;
+      if(cif.iwait == 1'd0)
+      begin
+        nextcblock[icif.indx] = cif.iload;
+        nextival[icif.indx].tag = icif.tag;
+        nextvalidarray[icif.indx] = 1'd1;
+        instrhit = 1'd0;
+      end
     end
   end
+  else
+  begin
+    instrhit = 1'd0;
+     // $display("dcache should take over atm");
+    nextvalidarray = validarray;
+    nextcblock = cblocks;
+    nextival = ivals;
+    nextiREN = 1'b0;
+  end
+end
 endmodule
