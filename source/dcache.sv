@@ -495,6 +495,7 @@ begin
     end
     else
     begin
+      nextcount = count;
       cif.dWEN = 1'd1;
       cif.daddr = 32'h3100;
       cif.dstore = hitcounter;
